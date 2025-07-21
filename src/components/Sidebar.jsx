@@ -76,26 +76,41 @@ const SidebarItem = ({ icon, label }) => (
   </button>
 );
 
-function Sidebar() {
+function Sidebar({ isOpen, onClose }) {
   return (
-    <aside className="w-64 p-4 bg-white shadow-md fixed top-16 bottom-0 overflow-y-auto text-sm">
-      <nav className="space-y-6">
-        {sidebarItems.map((section, index) => (
-          <div key={index}>
-            <h2 className="mb-2 text-xs font-semibold text-gray-500 uppercase tracking-widest px-2">
-              {section.title}
-            </h2>
-            <ul className="space-y-1">
-              {section.items.map((item, idx) => (
-                <li key={idx}>
-                  <SidebarItem icon={item.icon} label={item.label} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </nav>
-    </aside>
+    <>
+      {/* Backdrop for mobile */}
+      <div
+        className={`fixed inset-0 z-30 bg-black bg-opacity-30 sm:hidden transition-opacity duration-300 ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={onClose}
+      />
+
+      <aside
+        className={`fixed z-40 top-14 bottom-0 left-0 w-64 p-4 bg-white shadow-md transform transition-transform duration-300 ease-in-out
+        ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } sm:translate-x-0 sm:static sm:top-16 sm:h-[calc(100vh-64px)] overflow-y-auto`}
+      >
+        <nav className="space-y-6">
+          {sidebarItems.map((section, index) => (
+            <div key={index}>
+              <h2 className="mb-2 text-xs font-semibold text-gray-500 uppercase tracking-widest px-2">
+                {section.title}
+              </h2>
+              <ul className="space-y-1">
+                {section.items.map((item, idx) => (
+                  <li key={idx}>
+                    <SidebarItem icon={item.icon} label={item.label} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </aside>
+    </>
   );
 }
 
