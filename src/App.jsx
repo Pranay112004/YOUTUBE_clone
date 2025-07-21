@@ -1,19 +1,20 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
-import VideoGrid from "./components/VideoGrid";
+import Home from "./components/Home";
+import VideoPlayer from "./components/VideoPlayer";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <div className="flex mt-16">
-        <Sidebar className="lg:block hidden" />
-        <main className="ml-0 lg:ml-64 p-4 w-full">
-          <VideoGrid />
-        </main>
+    <Router>
+      <div className="min-h-screen bg-gray-100">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/watch/:videoId" element={<VideoPlayer />} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 }
 

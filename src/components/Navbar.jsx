@@ -1,6 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthProvider";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const { setValue } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setValue(searchQuery);
+      navigate("/"); // Navigate to home page with search results
+    }
+  };
+
   return (
     <nav className="flex items-center justify-between p-3 bg-white shadow-md fixed top-0 left-0 right-0 z-10">
       {/* Logo and Menu */}
@@ -20,22 +34,27 @@ function Navbar() {
             />
           </svg>
         </button>
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
-          alt="YouTube Logo"
-          className="h-6"
-        />
+        <Link to="/" className="flex items-center">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
+            alt="YouTube Logo"
+            className="h-6"
+          />
+        </Link>
       </div>
 
       {/* Search Bar */}
-      <div className="flex flex-1 max-w-xl mx-4">
+      <form onSubmit={handleSearch} className="flex flex-1 max-w-xl mx-4">
         <input
           type="text"
-          placeholder="Search in Pranay youtube"
-          className="w-full px-4 py-1 border border-gray-300 rounded-l-full focus:outline-none"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search videos..."
+          className="w-full px-4 py-1 border border-gray-300 rounded-l-full focus:outline-none focus:border-blue-500"
         />
         <button
-          className="px-4 bg-gray-100 border border-l-0 border-gray-300 rounded-r-full hover:bg-gray-200"
+          type="submit"
+          className="px-4 bg-gray-100 border border-l-0 border-gray-300 rounded-r-full hover:bg-gray-200 transition-colors"
           aria-label="Search"
         >
           <svg
@@ -52,7 +71,7 @@ function Navbar() {
             />
           </svg>
         </button>
-      </div>
+      </form>
 
       {/* Icons */}
       <div className="flex items-center space-x-4">
