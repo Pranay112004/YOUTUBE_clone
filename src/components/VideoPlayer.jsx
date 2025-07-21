@@ -44,20 +44,20 @@ function VideoPlayer() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row bg-gray-100 min-h-screen pt-16">
+    <div className="flex flex-col lg:flex-row bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen pt-16">
       {/* Main Video Section */}
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-6 animate-fadeInUp">
         {/* Video Player */}
-        <div className="bg-black rounded-lg overflow-hidden mb-4">
+        <div className="bg-black rounded-3xl overflow-hidden mb-6 shadow-2xl hover-lift">
           <iframe
             width="100%"
             height="500"
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
-            className="w-full"
+            className="w-full lg:h-[600px]"
           ></iframe>
         </div>
 
