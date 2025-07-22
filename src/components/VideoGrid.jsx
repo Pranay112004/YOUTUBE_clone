@@ -3,7 +3,9 @@ import VideoCard from "./VideoCard";
 import { useAuth } from "../context/AuthProvider";
 
 function VideoGrid() {
-  const { loading, data } = useAuth();
+  const { loading, data, error, fetchAllData, value, setValue, limit } =
+    useAuth();
+  const MAX_VIDEOS = 8; // Cap at 8 videos (adjust to 7 if preferred)
 
   // Fallback sample data if API data is not available
   const fallbackVideos = [
@@ -13,6 +15,8 @@ function VideoGrid() {
       views: "1M",
       thumbnail: "https://via.placeholder.com/320x180",
       id: "sample1",
+      duration: "5:32",
+      publishedAt: "", // Added for consistency
     },
     {
       title: "Sample Video 2",
@@ -20,6 +24,8 @@ function VideoGrid() {
       views: "500K",
       thumbnail: "https://via.placeholder.com/320x180",
       id: "sample2",
+      duration: "5:32",
+      publishedAt: "",
     },
     {
       title: "Sample Video 3",
@@ -27,6 +33,8 @@ function VideoGrid() {
       views: "750K",
       thumbnail: "https://via.placeholder.com/320x180",
       id: "sample3",
+      duration: "5:32",
+      publishedAt: "",
     },
   ];
 
@@ -50,17 +58,47 @@ function VideoGrid() {
     </div>
   );
 
+  // Handle button clicks for sorting/filtering
+  const handleFilter = (filter) => {
+    setValue(filter); // Updates query in AuthProvider
+  };
+
+  // Handle "Load More" button
+  const handleLoadMore = () => {
+    fetchAllData(value, true); // Append more data
+  };
+
   if (loading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 p-4 sm:p-6">
-        {Array.from({ length: 12 }, (_, i) => (
+        {Array.from({ length: Math.min(limit, MAX_VIDEOS) }, (_, i) => (
           <VideoSkeleton key={i} delay={i * 100} />
         ))}
       </div>
     );
   }
 
-  const videos = data && data.length > 0 ? data : fallbackVideos;
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="text-center">
+          <p className="text-red-600 text-lg font-semibold">{error}</p>
+          <button
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
+            onClick={() => fetchAllData(value, false)}
+            aria-label="Retry loading videos"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const videos = (data && data.length > 0 ? data : fallbackVideos).slice(
+    0,
+    MAX_VIDEOS
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -71,13 +109,37 @@ function VideoGrid() {
             Recommended for you
           </h2>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <button className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-gray-200 hover:bg-gray-300 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                value === "Latest"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 hover:bg-gray-300"
+              }`}
+              onClick={() => handleFilter("Latest")}
+              aria-label="Filter by latest videos"
+            >
               Latest
             </button>
-            <button className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-gray-200 hover:bg-gray-300 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                value === "Popular"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 hover:bg-gray-300"
+              }`}
+              onClick={() => handleFilter("Popular")}
+              aria-label="Filter by popular videos"
+            >
               Popular
             </button>
-            <button className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-gray-200 hover:bg-gray-300 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                value === "Trending"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 hover:bg-gray-300"
+              }`}
+              onClick={() => handleFilter("Trending")}
+              aria-label="Filter by trending videos"
+            >
               Trending
             </button>
           </div>
@@ -87,7 +149,6 @@ function VideoGrid() {
       {/* Video Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 px-4 sm:px-6 pb-8">
         {videos.map((video, index) => {
-          // Handle different video data structures
           let videoData = {
             id: `video-${index}`,
             title: "Unknown Title",
@@ -95,10 +156,10 @@ function VideoGrid() {
             views: "N/A",
             thumbnail:
               "https://via.placeholder.com/320x180/f3f4f6/9ca3af?text=Video+Thumbnail",
-            duration: "5:32",
+            duration: "Unknown",
+            publishedAt: "", // Added for consistency
           };
 
-          // Handle API data structure (from RapidAPI YouTube API)
           if (video.type === "video" && video.video) {
             const v = video.video;
             videoData = {
@@ -112,11 +173,10 @@ function VideoGrid() {
                 v.thumbnails?.[0]?.url ||
                 v.thumbnails?.[1]?.url ||
                 "https://via.placeholder.com/320x180/f3f4f6/9ca3af?text=Video+Thumbnail",
-              duration: v.length?.simpleText || "5:32",
+              duration: v.length?.simpleText || "Unknown",
+              publishedAt: v.publishedAt || "",
             };
-          }
-          // Handle fallback sample data structure
-          else if (video.title && video.channel) {
+          } else if (video.title && video.channel) {
             videoData = {
               id: video.id || `video-${index}`,
               title: video.title,
@@ -125,7 +185,8 @@ function VideoGrid() {
               thumbnail:
                 video.thumbnail ||
                 "https://via.placeholder.com/320x180/f3f4f6/9ca3af?text=Video+Thumbnail",
-              duration: video.duration || "5:32",
+              duration: video.duration || "Unknown",
+              publishedAt: video.publishedAt || "",
             };
           }
 
@@ -142,11 +203,28 @@ function VideoGrid() {
                 thumbnail={videoData.thumbnail}
                 videoId={videoData.id}
                 duration={videoData.duration}
+                publishedAt={videoData.publishedAt} // Pass to VideoCard
               />
             </div>
           );
         })}
       </div>
+
+      {/* Load More Button */}
+      {data.length > 0 && videos.length < MAX_VIDEOS && (
+        <div className="flex justify-center pb-6">
+          <button
+            className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors duration-200 disabled:bg-gray-400"
+            onClick={handleLoadMore}
+            disabled={loading || data.length >= MAX_VIDEOS}
+            aria-label={`Load more videos (currently ${data.length} of ${MAX_VIDEOS})`}
+          >
+            {loading
+              ? "Loading..."
+              : `Load More (${data.length} of ${MAX_VIDEOS} videos)`}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

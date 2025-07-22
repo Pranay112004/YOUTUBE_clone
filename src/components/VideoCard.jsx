@@ -7,10 +7,22 @@ function VideoCard({
   views,
   thumbnail,
   videoId,
-  duration = "5:32",
+  duration = "Unknown",
+  publishedAt, // New prop for dynamic timestamp
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
+  // Format timestamp (e.g., "2 days ago")
+  const formatTimestamp = (dateString) => {
+    if (!dateString) return "Recently";
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "1 day ago";
+    return `${diffDays} days ago`;
+  };
 
   return (
     <Link
@@ -18,18 +30,19 @@ function VideoCard({
       className="group block transform transition-all duration-300 hover:scale-[1.03] focus:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      aria-label={`Watch ${title} by ${channel}`}
     >
       <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-500 border border-gray-100 flex flex-col">
         {/* Thumbnail Section */}
         <div className="relative overflow-hidden aspect-video">
-          {/* Loading skeleton */}
           {!imageLoaded && (
             <div className="w-full h-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse"></div>
           )}
 
           <img
             src={thumbnail}
-            alt={title}
+            alt={`Thumbnail for ${title}`}
+            loading="lazy" // Optimize image loading
             className={`w-full h-full object-cover transition-all duration-700 ${
               imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-105"
             } group-hover:scale-110`}
@@ -43,7 +56,7 @@ function VideoCard({
 
           {/* Play button overlay */}
           <div
-            className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
+            className={`absolute inset-0 flex items-center justify-center transition-all duration-300 touch-none ${
               isHovered ? "bg-black/40" : "bg-black/0"
             }`}
           >
@@ -57,6 +70,7 @@ function VideoCard({
                   className="w-5 h-5 sm:w-6 h-6 text-white ml-0.5 sm:ml-1"
                   fill="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path d="M8 5v14l11-7z" />
                 </svg>
@@ -75,8 +89,12 @@ function VideoCard({
           <div className="flex space-x-3">
             {/* Channel Avatar */}
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 sm:w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                <span className="text-white font-semibold text-xs sm:text-sm">
+              <div
+                className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"
+                role="img"
+                aria-label={`Avatar for ${channel}`}
+              >
+                <span className="text-white font-semibold text-xs">
                   {channel?.charAt(0)?.toUpperCase() || "C"}
                 </span>
               </div>
@@ -93,19 +111,22 @@ function VideoCard({
               </h3>
 
               <div className="space-y-1">
-                <p className="text-gray-600 text-xs sm:text-sm hover:text-gray-800 transition-colors cursor-pointer truncate">
+                <p
+                  className="text-gray-600 text-xs sm:text-sm hover:text-gray-800 transition-colors cursor-pointer truncate"
+                  title={channel}
+                >
                   {channel}
                 </p>
                 <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-500">
                   <span>{views} views</span>
                   <span className="hidden sm:inline">•</span>
-                  <span>2 days ago</span>
+                  <span>{formatTimestamp(publishedAt)}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Action Buttons (appears on hover) */}
+          {/* Action Buttons */}
           <div
             className={`flex items-center justify-between pt-2 border-t border-gray-100 transition-all duration-300 ${
               isHovered
@@ -114,7 +135,14 @@ function VideoCard({
             }`}
           >
             <div className="flex space-x-3 sm:space-x-4">
-              <button className="flex items-center space-x-1 text-gray-600 hover:text-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500">
+              <button
+                className="flex items-center space-x-1 text-gray-600 hover:text-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+                aria-label="Like video"
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent Link navigation
+                  console.log(`Like video: ${videoId}`);
+                }}
+              >
                 <svg
                   className="w-4 h-4 sm:w-5 h-5"
                   fill="none"
@@ -131,7 +159,14 @@ function VideoCard({
                 <span className="text-xs sm:text-sm">Like</span>
               </button>
 
-              <button className="flex items-center space-x-1 text-gray-600 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <button
+                className="flex items-center space-x-1 text-gray-600 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Share video"
+                onClick={(e) => {
+                  e.preventDefault();
+                  console.log(`Share video: ${videoId}`);
+                }}
+              >
                 <svg
                   className="w-4 h-4 sm:w-5 h-5"
                   fill="none"
@@ -149,7 +184,14 @@ function VideoCard({
               </button>
             </div>
 
-            <button className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500">
+            <button
+              className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
+              aria-label="Save video"
+              onClick={(e) => {
+                e.preventDefault();
+                console.log(`Save video: ${videoId}`);
+              }}
+            >
               <svg
                 className="w-4 h-4 sm:w-5 h-5"
                 fill="none"
