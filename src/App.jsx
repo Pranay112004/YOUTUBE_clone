@@ -7,12 +7,15 @@ import VideoPlayer from "./components/VideoPlayer";
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-gray-100 dark:bg-youtube-dark flex flex-col">
         <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/watch/:videoId" element={<VideoPlayer />} />
-        </Routes>
+        {/* Add top margin to prevent content overlap */}
+        <div className="flex-1 overflow-y-auto mt-16">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/watch/:videoId" element={<VideoPlayer />} />
+          </Routes>
+        </div>
       </div>
     </Router>
   );
