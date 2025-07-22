@@ -50,15 +50,14 @@ function Navbar() {
 
           {/* YouTube Logo */}
           <Link to="/" className="flex items-center space-x-1">
-            <svg
-              viewBox="0 0 24 24"
-              className="w-8 h-8 text-red-600 fill-current"
-            >
-              <path d="M10 15l5.19-3L10 9v6zm12-3c0-1.2 0-2.4-.1-3.6a3.9 3.9 0 0 0-.6-2.1 3.6 3.6 0 0 0-2.1-.6C17.4 5.4 12 5.4 12 5.4s-5.4 0-7.2.3a3.6 3.6 0 0 0-2.1.6 3.9 3.9 0 0 0-.6 2.1c-.1 1.2-.1 2.4-.1 3.6s0 2.4.1 3.6a3.9 3.9 0 0 0 .6 2.1 3.6 3.6 0 0 0 2.1.6c1.8.3 7.2.3 7.2.3s5.4 0 7.2-.3a3.6 3.6 0 0 0 2.1-.6 3.9 3.9 0 0 0 .6-2.1c.1-1.2.1-2.4.1-3.6z" />
-            </svg>
-            <span className="text-xl font-semibold text-gray-900 tracking-tight hidden sm:block">
-              YouTube
-            </span>
+            {/* Left Section - Logo and Menu */}
+            <div className="flex items-center space-x-4">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
+                alt="YouTube Logo"
+                className="h-6"
+              />
+            </div>
           </Link>
         </div>
 
