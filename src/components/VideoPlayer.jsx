@@ -27,7 +27,7 @@ function VideoPlayer() {
   useEffect(() => {
     if (videoId && currentVideo?.title) {
       setRelatedLoading(true);
-      const query = currentVideo.title.split(" ").slice(0, 3).join(" ");
+      const query = currentVideo.title.split(" ").slice(0, 2).join(" ");
       fetchAllData(query, false).finally(() => setRelatedLoading(false));
     }
   }, [videoId, fetchAllData]); // Removed currentVideo.title from deps
@@ -39,7 +39,7 @@ function VideoPlayer() {
         .filter(
           (v) => v.type === "video" && v.video && v.video.videoId !== videoId
         )
-        .slice(0, 10);
+        .slice(0, 4);
       setRelatedVideos(filtered);
     } else {
       setRelatedVideos([]);
