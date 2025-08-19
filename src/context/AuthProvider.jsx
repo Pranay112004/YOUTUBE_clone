@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 export default function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [value, setValue] = useState("New");
+  const [value, setValue] = useState("JavaScript");
   const [error, setError] = useState(null);
   const [offset, setOffset] = useState(0);
   const limit = 5; // Fetch 5 videos at a time to respect API quota

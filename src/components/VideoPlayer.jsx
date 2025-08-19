@@ -81,9 +81,9 @@ function VideoPlayer() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen pt-[64px] sm:pt-[68px]">
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen pt-[64px] sm:pt-[68px]">
       {/* Main Video Section */}
-      <div className="flex-1 p-3 sm:p-4 lg:p-6 animate-fadeInUp">
+      <div className="max-w-6xl mx-auto p-3 sm:p-4 lg:p-6 animate-fadeInUp">
         {loading && !currentVideo ? (
           <div className="bg-black rounded-2xl overflow-hidden mb-4 sm:mb-6 shadow-lg">
             <div className="relative aspect-video bg-gray-200 animate-pulse"></div>
@@ -95,7 +95,7 @@ function VideoPlayer() {
               <div className="bg-black rounded-2xl overflow-hidden mb-4 sm:mb-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div className="relative aspect-video">
                   <iframe
-                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=1&showinfo=0&fs=1&iv_load_policy=3&cc_load_policy=0&disablekb=0&end_screen_info=0`}
                     title={currentVideo.title || "YouTube video player"}
                     aria-label={`Video player for ${currentVideo.title}`}
                     frameBorder="0"
@@ -241,62 +241,6 @@ function VideoPlayer() {
         )}
       </div>
 
-      {/* Related Videos Sidebar */}
-      <div className="w-full lg:w-80 xl:w-96 p-3 sm:p-4 lg:p-6">
-        <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-900">
-          Related Videos
-        </h2>
-
-        {relatedLoading ? (
-          <div className="space-y-3 sm:space-y-4">
-            {Array.from({ length: 5 }, (_, i) => (
-              <RelatedVideoSkeleton key={i} delay={i * 100} />
-            ))}
-          </div>
-        ) : relatedVideos.length === 0 ? (
-          <p className="text-gray-600 text-sm">No related videos found</p>
-        ) : (
-          <div className="space-y-3 sm:space-y-4 max-h-[calc(100vh-128px)] sm:max-h-[calc(100vh-132px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-            {relatedVideos.map((video, index) => (
-              <Link
-                key={video.video.videoId || index}
-                to={`/watch/${video.video.videoId}`}
-                className="flex bg-white rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label={`Watch ${video.video.title} by ${
-                  video.video.author?.title || "Unknown Channel"
-                }`}
-              >
-                <img
-                  src={
-                    video.video.thumbnails?.[0]?.url ||
-                    "https://via.placeholder.com/168x94"
-                  }
-                  alt={`Thumbnail for ${video.video.title}`}
-                  loading="lazy"
-                  className="w-36 sm:w-42 h-20 sm:h-24 object-cover flex-shrink-0"
-                />
-                <div className="p-2 sm:p-3 flex-1">
-                  <h3 className="font-semibold text-xs sm:text-sm mb-1 line-clamp-2 text-gray-900">
-                    {video.video.title}
-                  </h3>
-                  <p className="text-xs text-gray-600 mb-1 truncate">
-                    {video.video.author?.title || "Unknown Channel"}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {video.video.stats?.views
-                      ? `${Math.floor(video.video.stats.views / 1000)}K views`
-                      : "No views"}
-                    {" • "}
-                    {video.video.publishedAt
-                      ? new Date(video.video.publishedAt).toLocaleDateString()
-                      : "Unknown date"}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }

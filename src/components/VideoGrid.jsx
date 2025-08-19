@@ -1,12 +1,10 @@
 import React from "react";
 import VideoCard from "./VideoCard";
+import { useAuth } from "../context/AuthProvider";
 
 function VideoGrid() {
-  // Mock data for demonstration - replace with your actual data fetching
-  const [loading, setLoading] = React.useState(false);
-  const [data, setData] = React.useState([]);
-  const [error, setError] = React.useState(null);
-  const [value, setValue] = React.useState("All");
+  // Use real data from AuthProvider instead of mock data
+  const { loading, data, error, value, setValue } = useAuth();
 
   const MAX_VIDEOS = 24; // YouTube typically shows many videos
 

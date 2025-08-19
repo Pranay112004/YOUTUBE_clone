@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function VideoCard({
   title,
@@ -11,6 +12,7 @@ function VideoCard({
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
 
   // Format timestamp exactly like YouTube
   const formatTimestamp = (dateString) => {
@@ -69,7 +71,7 @@ function VideoCard({
       className="cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => console.log(`Navigate to /watch/${videoId}`)}
+      onClick={() => navigate(`/watch/${videoId}`)}
     >
       {/* Thumbnail Container */}
       <div className="relative mb-3">
